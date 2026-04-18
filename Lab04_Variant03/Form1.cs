@@ -85,7 +85,7 @@ namespace Lab04_Variant03
             var order = _graph!.BFS(start);
 
             AppendOutput("");
-            AppendOutput($"═══ BFS от вершины «{start}» ═══");
+            AppendOutput($" BFS от вершины «{start}» ");
             AppendOutput($"Порядок посещения ({order.Count} вершин):");
             for (int i = 0; i < order.Count; i++)
                 AppendOutput($"  {i + 1}. {order[i]}");
@@ -101,7 +101,7 @@ namespace Lab04_Variant03
             var order = _graph!.DFS(start);
 
             AppendOutput("");
-            AppendOutput($"═══ DFS от вершины «{start}» ═══");
+            AppendOutput($"DFS от вершины «{start}» ");
             AppendOutput($"Порядок посещения ({order.Count} вершин):");
             for (int i = 0; i < order.Count; i++)
                 AppendOutput($"  {i + 1}. {order[i]}");
@@ -117,7 +117,7 @@ namespace Lab04_Variant03
             bool reachable = _graph!.IsReachable(from, to);
 
             AppendOutput("");
-            AppendOutput($"═══ Достижимость ═══");
+            AppendOutput($"Достижимость ");
             AppendOutput(reachable
                 ? $"✔ Вершина «{to}» ДОСТИЖИМА из «{from}»."
                 : $"✘ Вершина «{to}» НЕ достижима из «{from}».");
@@ -132,7 +132,7 @@ namespace Lab04_Variant03
             var components = _graph!.GetConnectedComponents();
 
             AppendOutput("");
-            AppendOutput($"═══ Компоненты связности: {components.Count} ═══");
+            AppendOutput($"Компоненты связности: {components.Count} ");
             for (int i = 0; i < components.Count; i++)
             {
                 AppendOutput($"  Компонента {i + 1} ({components[i].Count} вершин):");

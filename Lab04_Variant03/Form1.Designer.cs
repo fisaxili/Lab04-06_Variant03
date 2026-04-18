@@ -15,199 +15,279 @@
 
         private void InitializeComponent()
         {
-            //Controls
-            this.panelLeft = new System.Windows.Forms.Panel();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.btnLoad = new System.Windows.Forms.Button();
-            this.grpBfs = new System.Windows.Forms.GroupBox();
-            this.lblBfsStart = new System.Windows.Forms.Label();
-            this.cmbBfsStart = new System.Windows.Forms.ComboBox();
-            this.btnBfs = new System.Windows.Forms.Button();
-            this.grpDfs = new System.Windows.Forms.GroupBox();
-            this.lblDfsStart = new System.Windows.Forms.Label();
-            this.cmbDfsStart = new System.Windows.Forms.ComboBox();
-            this.btnDfs = new System.Windows.Forms.Button();
-            this.grpReach = new System.Windows.Forms.GroupBox();
-            this.lblReachFrom = new System.Windows.Forms.Label();
-            this.cmbReachFrom = new System.Windows.Forms.ComboBox();
-            this.lblReachTo = new System.Windows.Forms.Label();
-            this.cmbReachTo = new System.Windows.Forms.ComboBox();
-            this.btnReach = new System.Windows.Forms.Button();
-            this.btnComponents = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.txtOutput = new System.Windows.Forms.RichTextBox();
-            this.lblOutput = new System.Windows.Forms.Label();
-
-            this.panelLeft.SuspendLayout();
-            this.grpBfs.SuspendLayout();
-            this.grpDfs.SuspendLayout();
-            this.grpReach.SuspendLayout();
-            this.SuspendLayout();
-
-            //Form 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1000, 640);
-            this.Font = new System.Drawing.Font("Times New Roman", 10F);
-            this.MinimumSize = new System.Drawing.Size(1020, 690);
-            this.Text = "ЛР №4 — Дорожная сеть района (Вариант 3)";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-
-            //panelLeft
-            this.panelLeft.Location = new System.Drawing.Point(10, 10);
-            this.panelLeft.Size = new System.Drawing.Size(310, 615);
-            this.panelLeft.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelLeft.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.lblTitle, this.btnLoad,
-                this.grpBfs, this.grpDfs, this.grpReach,
-                this.btnComponents, this.btnClear
-            });
-
-            //lblTitle
-            this.lblTitle.Text = "Дорожная сеть района";
-            this.lblTitle.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.Location = new System.Drawing.Point(10, 10);
-            this.lblTitle.Size = new System.Drawing.Size(285, 40);
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-
-            //btnLoad 
-            this.btnLoad.Text = "Загрузить граф из файла";
-            this.btnLoad.Location = new System.Drawing.Point(10, 58);
-            this.btnLoad.Size = new System.Drawing.Size(285, 34);
-            this.btnLoad.BackColor = System.Drawing.Color.SteelBlue;
-            this.btnLoad.ForeColor = System.Drawing.Color.White;
-            this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-
-            // grpBfs 
-            this.grpBfs.Text = "BFS — обход в ширину";
-            this.grpBfs.Location = new System.Drawing.Point(10, 105);
-            this.grpBfs.Size = new System.Drawing.Size(285, 110);
-
-            this.lblBfsStart.Text = "Стартовая вершина:";
-            this.lblBfsStart.Location = new System.Drawing.Point(8, 25);
-            this.lblBfsStart.Size = new System.Drawing.Size(150, 22);
-
-            this.cmbBfsStart.Location = new System.Drawing.Point(8, 48);
-            this.cmbBfsStart.Size = new System.Drawing.Size(265, 26);
-            this.cmbBfsStart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-
-            this.btnBfs.Text = "Запустить BFS";
-            this.btnBfs.Location = new System.Drawing.Point(8, 78);
-            this.btnBfs.Size = new System.Drawing.Size(265, 26);
-            this.btnBfs.BackColor = System.Drawing.Color.DarkSeaGreen;
-            this.btnBfs.ForeColor = System.Drawing.Color.White;
-            this.btnBfs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnBfs.Click += new System.EventHandler(this.btnBfs_Click);
-
-            this.grpBfs.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.lblBfsStart, this.cmbBfsStart, this.btnBfs
-            });
-
-            //grpDfs 
-            this.grpDfs.Text = "DFS — обход в глубину";
-            this.grpDfs.Location = new System.Drawing.Point(10, 225);
-            this.grpDfs.Size = new System.Drawing.Size(285, 110);
-
-            this.lblDfsStart.Text = "Стартовая вершина:";
-            this.lblDfsStart.Location = new System.Drawing.Point(8, 25);
-            this.lblDfsStart.Size = new System.Drawing.Size(150, 22);
-
-            this.cmbDfsStart.Location = new System.Drawing.Point(8, 48);
-            this.cmbDfsStart.Size = new System.Drawing.Size(265, 26);
-            this.cmbDfsStart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-
-            this.btnDfs.Text = "Запустить DFS";
-            this.btnDfs.Location = new System.Drawing.Point(8, 78);
-            this.btnDfs.Size = new System.Drawing.Size(265, 26);
-            this.btnDfs.BackColor = System.Drawing.Color.DarkSeaGreen;
-            this.btnDfs.ForeColor = System.Drawing.Color.White;
-            this.btnDfs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDfs.Click += new System.EventHandler(this.btnDfs_Click);
-
-            this.grpDfs.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.lblDfsStart, this.cmbDfsStart, this.btnDfs
-            });
-
+            panelLeft = new Panel();
+            lblTitle = new Label();
+            btnLoad = new Button();
+            grpBfs = new GroupBox();
+            lblBfsStart = new Label();
+            cmbBfsStart = new ComboBox();
+            btnBfs = new Button();
+            grpDfs = new GroupBox();
+            lblDfsStart = new Label();
+            cmbDfsStart = new ComboBox();
+            btnDfs = new Button();
+            grpReach = new GroupBox();
+            lblReachFrom = new Label();
+            cmbReachFrom = new ComboBox();
+            lblReachTo = new Label();
+            cmbReachTo = new ComboBox();
+            btnReach = new Button();
+            btnComponents = new Button();
+            btnClear = new Button();
+            txtOutput = new RichTextBox();
+            lblOutput = new Label();
+            panelLeft.SuspendLayout();
+            grpBfs.SuspendLayout();
+            grpDfs.SuspendLayout();
+            grpReach.SuspendLayout();
+            SuspendLayout();
+            // 
+            // panelLeft
+            // 
+            panelLeft.BorderStyle = BorderStyle.FixedSingle;
+            panelLeft.Controls.Add(lblTitle);
+            panelLeft.Controls.Add(btnLoad);
+            panelLeft.Controls.Add(grpBfs);
+            panelLeft.Controls.Add(grpDfs);
+            panelLeft.Controls.Add(grpReach);
+            panelLeft.Controls.Add(btnComponents);
+            panelLeft.Controls.Add(btnClear);
+            panelLeft.Location = new Point(10, 10);
+            panelLeft.Name = "panelLeft";
+            panelLeft.Size = new Size(310, 632);
+            panelLeft.TabIndex = 0;
+            // 
+            // lblTitle
+            // 
+            lblTitle.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
+            lblTitle.Location = new Point(10, 10);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(285, 40);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Дорожная сеть района";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // btnLoad
+            // 
+            btnLoad.BackColor = Color.SteelBlue;
+            btnLoad.FlatStyle = FlatStyle.Flat;
+            btnLoad.ForeColor = Color.White;
+            btnLoad.Location = new Point(10, 58);
+            btnLoad.Name = "btnLoad";
+            btnLoad.Size = new Size(285, 34);
+            btnLoad.TabIndex = 1;
+            btnLoad.Text = "Загрузить граф из файла";
+            btnLoad.UseVisualStyleBackColor = false;
+            btnLoad.Click += btnLoad_Click;
+            // 
+            // grpBfs
+            // 
+            grpBfs.Controls.Add(lblBfsStart);
+            grpBfs.Controls.Add(cmbBfsStart);
+            grpBfs.Controls.Add(btnBfs);
+            grpBfs.Location = new Point(10, 105);
+            grpBfs.Name = "grpBfs";
+            grpBfs.Size = new Size(285, 110);
+            grpBfs.TabIndex = 2;
+            grpBfs.TabStop = false;
+            grpBfs.Text = "BFS — обход в ширину";
+            // 
+            // lblBfsStart
+            // 
+            lblBfsStart.Location = new Point(8, 25);
+            lblBfsStart.Name = "lblBfsStart";
+            lblBfsStart.Size = new Size(150, 22);
+            lblBfsStart.TabIndex = 0;
+            lblBfsStart.Text = "Стартовая вершина:";
+            // 
+            // cmbBfsStart
+            // 
+            cmbBfsStart.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbBfsStart.Location = new Point(8, 48);
+            cmbBfsStart.Name = "cmbBfsStart";
+            cmbBfsStart.Size = new Size(265, 27);
+            cmbBfsStart.TabIndex = 1;
+            // 
+            // btnBfs
+            // 
+            btnBfs.BackColor = Color.DarkSeaGreen;
+            btnBfs.FlatStyle = FlatStyle.Flat;
+            btnBfs.ForeColor = Color.White;
+            btnBfs.Location = new Point(8, 78);
+            btnBfs.Name = "btnBfs";
+            btnBfs.Size = new Size(265, 26);
+            btnBfs.TabIndex = 2;
+            btnBfs.Text = "Запустить BFS";
+            btnBfs.UseVisualStyleBackColor = false;
+            btnBfs.Click += btnBfs_Click;
+            // 
+            // grpDfs
+            // 
+            grpDfs.Controls.Add(lblDfsStart);
+            grpDfs.Controls.Add(cmbDfsStart);
+            grpDfs.Controls.Add(btnDfs);
+            grpDfs.Location = new Point(10, 225);
+            grpDfs.Name = "grpDfs";
+            grpDfs.Size = new Size(285, 110);
+            grpDfs.TabIndex = 3;
+            grpDfs.TabStop = false;
+            grpDfs.Text = "DFS — обход в глубину";
+            // 
+            // lblDfsStart
+            // 
+            lblDfsStart.Location = new Point(8, 25);
+            lblDfsStart.Name = "lblDfsStart";
+            lblDfsStart.Size = new Size(150, 22);
+            lblDfsStart.TabIndex = 0;
+            lblDfsStart.Text = "Стартовая вершина:";
+            // 
+            // cmbDfsStart
+            // 
+            cmbDfsStart.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDfsStart.Location = new Point(8, 48);
+            cmbDfsStart.Name = "cmbDfsStart";
+            cmbDfsStart.Size = new Size(265, 27);
+            cmbDfsStart.TabIndex = 1;
+            // 
+            // btnDfs
+            // 
+            btnDfs.BackColor = Color.DarkSeaGreen;
+            btnDfs.FlatStyle = FlatStyle.Flat;
+            btnDfs.ForeColor = Color.White;
+            btnDfs.Location = new Point(8, 78);
+            btnDfs.Name = "btnDfs";
+            btnDfs.Size = new Size(265, 26);
+            btnDfs.TabIndex = 2;
+            btnDfs.Text = "Запустить DFS";
+            btnDfs.UseVisualStyleBackColor = false;
+            btnDfs.Click += btnDfs_Click;
+            // 
             // grpReach
-            this.grpReach.Text = "Проверка достижимости (BFS)";
-            this.grpReach.Location = new System.Drawing.Point(10, 345);
-            this.grpReach.Size = new System.Drawing.Size(285, 145);
-
-            this.lblReachFrom.Text = "Из вершины:";
-            this.lblReachFrom.Location = new System.Drawing.Point(8, 25);
-            this.lblReachFrom.Size = new System.Drawing.Size(100, 22);
-
-            this.cmbReachFrom.Location = new System.Drawing.Point(8, 48);
-            this.cmbReachFrom.Size = new System.Drawing.Size(265, 26);
-            this.cmbReachFrom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-
-            this.lblReachTo.Text = "В вершину:";
-            this.lblReachTo.Location = new System.Drawing.Point(8, 78);
-            this.lblReachTo.Size = new System.Drawing.Size(100, 22);
-
-            this.cmbReachTo.Location = new System.Drawing.Point(8, 100);
-            this.cmbReachTo.Size = new System.Drawing.Size(265, 26);
-            this.cmbReachTo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-
-            this.btnReach.Text = "Проверить достижимость";
-            this.btnReach.Location = new System.Drawing.Point(8, 112);
-            this.btnReach.Size = new System.Drawing.Size(265, 26);
-            this.btnReach.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.btnReach.ForeColor = System.Drawing.Color.White;
-            this.btnReach.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnReach.Click += new System.EventHandler(this.btnReach_Click);
-
-            this.grpReach.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.lblReachFrom, this.cmbReachFrom,
-                this.lblReachTo,   this.cmbReachTo,
-                this.btnReach
-            });
-
-            // btnComponents 
-            this.btnComponents.Text = "Компоненты связности";
-            this.btnComponents.Location = new System.Drawing.Point(10, 500);
-            this.btnComponents.Size = new System.Drawing.Size(285, 34);
-            this.btnComponents.BackColor = System.Drawing.Color.DarkOrange;
-            this.btnComponents.ForeColor = System.Drawing.Color.White;
-            this.btnComponents.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnComponents.Click += new System.EventHandler(this.btnComponents_Click);
-
-            // btnClear 
-            this.btnClear.Text = "Очистить вывод";
-            this.btnClear.Location = new System.Drawing.Point(10, 544);
-            this.btnClear.Size = new System.Drawing.Size(285, 34);
-            this.btnClear.BackColor = System.Drawing.Color.Gray;
-            this.btnClear.ForeColor = System.Drawing.Color.White;
-            this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-
-            // lblOutput 
-            this.lblOutput.Text = "Результаты:";
-            this.lblOutput.Font = new System.Drawing.Font("Times New Roman", 10F, System.Drawing.FontStyle.Bold);
-            this.lblOutput.Location = new System.Drawing.Point(330, 10);
-            this.lblOutput.Size = new System.Drawing.Size(120, 22);
-
-            //txtOutput 
-            this.txtOutput.Location = new System.Drawing.Point(330, 35);
-            this.txtOutput.Size = new System.Drawing.Size(655, 590);
-            this.txtOutput.ReadOnly = true;
-            this.txtOutput.Font = new System.Drawing.Font("Consolas", 9.5F);
-            this.txtOutput.BackColor = System.Drawing.Color.FromArgb(30, 30, 30);
-            this.txtOutput.ForeColor = System.Drawing.Color.LightGreen;
-            this.txtOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.txtOutput.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-
-            //Add to Form 
-            this.Controls.AddRange(new System.Windows.Forms.Control[] {
-                this.panelLeft, this.lblOutput, this.txtOutput
-            });
-
-            this.panelLeft.ResumeLayout(false);
-            this.grpBfs.ResumeLayout(false);
-            this.grpDfs.ResumeLayout(false);
-            this.grpReach.ResumeLayout(false);
-            this.ResumeLayout(false);
+            // 
+            grpReach.Controls.Add(lblReachFrom);
+            grpReach.Controls.Add(cmbReachFrom);
+            grpReach.Controls.Add(lblReachTo);
+            grpReach.Controls.Add(cmbReachTo);
+            grpReach.Controls.Add(btnReach);
+            grpReach.Location = new Point(10, 345);
+            grpReach.Name = "grpReach";
+            grpReach.Size = new Size(285, 165);
+            grpReach.TabIndex = 4;
+            grpReach.TabStop = false;
+            grpReach.Text = "Проверка достижимости (BFS)";
+            // 
+            // lblReachFrom
+            // 
+            lblReachFrom.Location = new Point(8, 25);
+            lblReachFrom.Name = "lblReachFrom";
+            lblReachFrom.Size = new Size(100, 22);
+            lblReachFrom.TabIndex = 0;
+            lblReachFrom.Text = "Из вершины:";
+            // 
+            // cmbReachFrom
+            // 
+            cmbReachFrom.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbReachFrom.Location = new Point(8, 48);
+            cmbReachFrom.Name = "cmbReachFrom";
+            cmbReachFrom.Size = new Size(265, 27);
+            cmbReachFrom.TabIndex = 1;
+            // 
+            // lblReachTo
+            // 
+            lblReachTo.Location = new Point(8, 78);
+            lblReachTo.Name = "lblReachTo";
+            lblReachTo.Size = new Size(100, 22);
+            lblReachTo.TabIndex = 2;
+            lblReachTo.Text = "В вершину:";
+            // 
+            // cmbReachTo
+            // 
+            cmbReachTo.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbReachTo.Location = new Point(8, 100);
+            cmbReachTo.Name = "cmbReachTo";
+            cmbReachTo.Size = new Size(265, 27);
+            cmbReachTo.TabIndex = 3;
+            // 
+            // btnReach
+            // 
+            btnReach.BackColor = Color.CornflowerBlue;
+            btnReach.FlatStyle = FlatStyle.Flat;
+            btnReach.ForeColor = Color.White;
+            btnReach.Location = new Point(8, 133);
+            btnReach.Name = "btnReach";
+            btnReach.Size = new Size(265, 26);
+            btnReach.TabIndex = 4;
+            btnReach.Text = "Проверить достижимость";
+            btnReach.UseVisualStyleBackColor = false;
+            btnReach.Click += btnReach_Click;
+            // 
+            // btnComponents
+            // 
+            btnComponents.BackColor = Color.DarkOrange;
+            btnComponents.FlatStyle = FlatStyle.Flat;
+            btnComponents.ForeColor = Color.White;
+            btnComponents.Location = new Point(10, 528);
+            btnComponents.Name = "btnComponents";
+            btnComponents.Size = new Size(285, 34);
+            btnComponents.TabIndex = 5;
+            btnComponents.Text = "Компоненты связности";
+            btnComponents.UseVisualStyleBackColor = false;
+            btnComponents.Click += btnComponents_Click;
+            // 
+            // btnClear
+            // 
+            btnClear.BackColor = Color.Gray;
+            btnClear.FlatStyle = FlatStyle.Flat;
+            btnClear.ForeColor = Color.White;
+            btnClear.Location = new Point(10, 568);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(285, 34);
+            btnClear.TabIndex = 6;
+            btnClear.Text = "Очистить вывод";
+            btnClear.UseVisualStyleBackColor = false;
+            btnClear.Click += btnClear_Click;
+            // 
+            // txtOutput
+            // 
+            txtOutput.BackColor = Color.FromArgb(30, 30, 30);
+            txtOutput.BorderStyle = BorderStyle.FixedSingle;
+            txtOutput.Font = new Font("Consolas", 9.5F);
+            txtOutput.ForeColor = Color.LightGreen;
+            txtOutput.Location = new Point(330, 35);
+            txtOutput.Name = "txtOutput";
+            txtOutput.ReadOnly = true;
+            txtOutput.ScrollBars = RichTextBoxScrollBars.Vertical;
+            txtOutput.Size = new Size(655, 590);
+            txtOutput.TabIndex = 2;
+            txtOutput.Text = "";
+            // 
+            // lblOutput
+            // 
+            lblOutput.Font = new Font("Times New Roman", 10F, FontStyle.Bold);
+            lblOutput.Location = new Point(330, 10);
+            lblOutput.Name = "lblOutput";
+            lblOutput.Size = new Size(120, 22);
+            lblOutput.TabIndex = 1;
+            lblOutput.Text = "Результаты:";
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(9F, 19F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1002, 676);
+            Controls.Add(panelLeft);
+            Controls.Add(lblOutput);
+            Controls.Add(txtOutput);
+            Font = new Font("Times New Roman", 10F);
+            MinimumSize = new Size(1020, 690);
+            Name = "Form1";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "ЛР №4 — Дорожная сеть района (Вариант 3)";
+            panelLeft.ResumeLayout(false);
+            grpBfs.ResumeLayout(false);
+            grpDfs.ResumeLayout(false);
+            grpReach.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion

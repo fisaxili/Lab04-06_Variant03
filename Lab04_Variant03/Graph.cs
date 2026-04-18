@@ -235,3 +235,5 @@ namespace Lab04_Variant03
 
             return graph;
         }
+    }
+}

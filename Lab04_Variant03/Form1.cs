@@ -38,7 +38,7 @@ namespace Lab04_Variant03
                 _graph = Graph.LoadFromFile(dlg.FileName);
                 PopulateComboBoxes();
 
-                AppendOutput($"✔ Граф загружен: {_graph.Vertices.Count} вершин.");
+                AppendOutput($"Граф загружен: {_graph.Vertices.Count} вершин.");
                 AppendOutput("Вершины:");
                 foreach (string v in _graph.Vertices)
                     AppendOutput($"  • {v}");
@@ -49,3 +49,61 @@ namespace Lab04_Variant03
                                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void PopulateComboBoxes()
+        {
+            if (_graph == null) return;
+
+            cmbBfsStart.Items.Clear();
+            cmbDfsStart.Items.Clear();
+            cmbReachFrom.Items.Clear();
+            cmbReachTo.Items.Clear();
+
+            foreach (string v in _graph.Vertices)
+            {
+                cmbBfsStart.Items.Add(v);
+                cmbDfsStart.Items.Add(v);
+                cmbReachFrom.Items.Add(v);
+                cmbReachTo.Items.Add(v);
+            }
+
+            if (cmbBfsStart.Items.Count > 0)
+            {
+                cmbBfsStart.SelectedIndex = 0;
+                cmbDfsStart.SelectedIndex = 0;
+                cmbReachFrom.SelectedIndex = 0;
+                cmbReachTo.SelectedIndex = cmbReachTo.Items.Count > 1 ? 1 : 0;
+            }
+        }
+
+        // BFS
+
+        private void btnBfs_Click(object sender, EventArgs e)
+        {
+            if (!CheckGraphLoaded()) return;
+            if (cmbBfsStart.SelectedItem is not string start) return;
+
+            var order = _graph!.BFS(start);
+
+            AppendOutput("");
+            AppendOutput($"═══ BFS от вершины «{start}» ═══");
+            AppendOutput($"Порядок посещения ({order.Count} вершин):");
+            for (int i = 0; i < order.Count; i++)
+                AppendOutput($"  {i + 1}. {order[i]}");
+        }
+
+        // DFS 
+
+        private void btnDfs_Click(object sender, EventArgs e)
+        {
+            if (!CheckGraphLoaded()) return;
+            if (cmbDfsStart.SelectedItem is not string start) return;
+
+            var order = _graph!.DFS(start);
+
+            AppendOutput("");
+            AppendOutput($"═══ DFS от вершины «{start}» ═══");
+            AppendOutput($"Порядок посещения ({order.Count} вершин):");
+            for (int i = 0; i < order.Count; i++)
+                AppendOutput($"  {i + 1}. {order[i]}");
+        }
+

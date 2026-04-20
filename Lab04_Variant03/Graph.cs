@@ -284,7 +284,71 @@ namespace Lab04_Variant03
             path.Reverse();
             return path;
         }
+        // ─────────────────────────────────────────────────────────────
+        //  Точки сочленения (ЛР №6, задача 1)
+        // ─────────────────────────────────────────────────────────────
 
+        /// <summary>
+        /// Находит все точки сочленения графа алгоритмом Тарьяна (DFS).
+        /// Точка сочленения — вершина, удаление которой увеличивает число
+        /// компонент связности.
+        /// </summary>
+        public List<string> FindArticulationPoints()
+        {
+            var result = new HashSet<string>();
+            var visited = new HashSet<string>();
+            var disc = new Dictionary<string, int>();   // время входа
+            var low = new Dictionary<string, int>();   // минимальное disc достижимое
+            var parent = new Dictionary<string, string?>();
+            int timer = 0;
+
+            // Рекурсивный DFS через явный стек не подходит для алгоритма Тарьяна —
+            // используем локальную рекурсию через вспомогательный метод
+            void Dfs(string u)
+            {
+                visited.Add(u);
+                disc[u] = low[u] = timer++;
+                int childCount = 0;
+
+                foreach (var (v, _) in GetNeighbors(u))
+                {
+                    if (!visited.Contains(v))
+                    {
+                        childCount++;
+                        parent[v] = u;
+                        Dfs(v);
+
+                        // Обновляем low[u] через потомка
+                        low[u] = Math.Min(low[u], low[v]);
+
+                        // Корень дерева DFS с двумя и более детьми — точка сочленения
+                        if (!parent.ContainsKey(u) && childCount > 1)
+                            result.Add(u);
+
+                        // Не корень: low[v] >= disc[u] означает, что v не может
+                        // обойти u через обратное ребро
+                        if (parent.ContainsKey(u) && low[v] >= disc[u])
+                            result.Add(u);
+                    }
+                    else if (parent.TryGetValue(u, out string? p) && v != p)
+                    {
+                        // Обратное ребро — обновляем low[u]
+                        low[u] = Math.Min(low[u], disc[v]);
+                    }
+                }
+            }
+
+            foreach (string v in _vertices)
+            {
+                if (!visited.Contains(v))
+                {
+                    parent.Remove(v); // корень — нет родителя
+                    Dfs(v);
+                }
+            }
+
+            return result.OrderBy(v => _vertices.IndexOf(v)).ToList();
+        }
         //  Загрузка графа из файла
         /// <summary>
         /// Загружает граф из текстового файла.

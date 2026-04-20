@@ -195,6 +195,69 @@ namespace Lab04_Variant03
 
             return components;
         }
+
+        //  Алгоритм Дейкстры — кратчайшие пути от источника (ЛР 5)
+        /// <summary>
+        /// Алгоритм Дейкстры без использования библиотечных приоритетных очередей.
+        /// Реализован через линейный поиск минимума (O(V²)).
+        /// </summary>
+        /// <param name="source">Начальная вершина.</param>
+        /// <returns>
+        /// Словарь расстояний от <paramref name="source"/> до каждой вершины
+        /// и словарь предшественников для восстановления маршрута.
+        /// </returns>
+        public (Dictionary<string, double> dist, Dictionary<string, string?> prev)
+            Dijkstra(string source)
+        {
+            var dist = new Dictionary<string, double>();
+            var prev = new Dictionary<string, string?>();
+            var unvisited = new HashSet<string>();
+
+            // Инициализация: все расстояния = ∞, предшественник = null
+            foreach (string v in _vertices)
+            {
+                dist[v] = double.PositiveInfinity;
+                prev[v] = null;
+                unvisited.Add(v);
+            }
+            dist[source] = 0.0;
+
+            while (unvisited.Count > 0)
+            {
+                // Выбираем непосещённую вершину с минимальным расстоянием
+                string? u = null;
+                double minDist = double.PositiveInfinity;
+                foreach (string v in unvisited)
+                {
+                    if (dist[v] < minDist)
+                    {
+                        minDist = dist[v];
+                        u = v;
+                    }
+                }
+
+                // Все оставшиеся вершины недостижимы
+                if (u == null) break;
+
+                unvisited.Remove(u);
+
+                // Обновляем расстояния до соседей
+                foreach (var (neighbor, weight) in GetNeighbors(u))
+                {
+                    if (!unvisited.Contains(neighbor)) continue;
+
+                    double alt = dist[u] + weight;
+                    if (alt < dist[neighbor])
+                    {
+                        dist[neighbor] = alt;
+                        prev[neighbor] = u;
+                    }
+                }
+            }
+
+            return (dist, prev);
+        }
+
         //  Загрузка графа из файла
         /// <summary>
         /// Загружает граф из текстового файла.

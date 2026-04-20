@@ -349,6 +349,76 @@ namespace Lab04_Variant03
 
             return result.OrderBy(v => _vertices.IndexOf(v)).ToList();
         }
+        // ─────────────────────────────────────────────────────────────
+        //  Минимальное остовное дерево — алгоритм Прима (ЛР №6, задача 2)
+        // ─────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Строит минимальное остовное дерево алгоритмом Прима.
+        /// Работает только для связного графа; если граф несвязный —
+        /// строит МОД для компоненты, содержащей первую вершину.
+        /// </summary>
+        /// <returns>
+        /// Список рёбер МОД в виде (from, to, weight) и суммарный вес.
+        /// </returns>
+        public (List<(string from, string to, double weight)> edges, double totalWeight)
+            PrimMST()
+        {
+            if (_vertices.Count == 0)
+                return (new List<(string, string, double)>(), 0);
+
+            var inMST = new HashSet<string>();
+            var mstEdges = new List<(string from, string to, double weight)>();
+
+            // key[v]    — минимальный вес ребра, соединяющего v с деревом
+            // mstParent — откуда пришли в v
+            var key = new Dictionary<string, double>();
+            var mstParent = new Dictionary<string, string?>();
+
+            foreach (string v in _vertices)
+            {
+                key[v] = double.PositiveInfinity;
+                mstParent[v] = null;
+            }
+            key[_vertices[0]] = 0.0;
+
+            for (int iter = 0; iter < _vertices.Count; iter++)
+            {
+                // Выбираем вершину вне МОД с минимальным key
+                string? u = null;
+                double minKey = double.PositiveInfinity;
+                foreach (string v in _vertices)
+                {
+                    if (!inMST.Contains(v) && key[v] < minKey)
+                    {
+                        minKey = key[v];
+                        u = v;
+                    }
+                }
+
+                if (u == null) break; // оставшиеся вершины недостижимы
+
+                inMST.Add(u);
+
+                // Добавляем ребро в МОД (кроме стартовой вершины)
+                if (mstParent[u] != null)
+                    mstEdges.Add((mstParent[u]!, u, key[u]));
+
+                // Обновляем ключи соседей
+                foreach (var (neighbor, weight) in GetNeighbors(u))
+                {
+                    if (!inMST.Contains(neighbor) && weight < key[neighbor])
+                    {
+                        key[neighbor] = weight;
+                        mstParent[neighbor] = u;
+                    }
+                }
+            }
+
+            double total = mstEdges.Sum(e => e.weight);
+            return (mstEdges, total);
+        }
+
         //  Загрузка графа из файла
         /// <summary>
         /// Загружает граф из текстового файла.

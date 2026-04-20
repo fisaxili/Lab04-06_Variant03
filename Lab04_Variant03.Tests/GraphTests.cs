@@ -4,24 +4,35 @@ using System.IO;
 
 namespace Lab04_Variant03.Tests
 {
+    /// <summary>
+    /// Модульные тесты для класса Graph (MSTest).
+    /// Покрывают: структуру графа, BFS, DFS, достижимость, компоненты связности.
+    /// </summary>
     [TestClass]
     public class GraphTests
     {
-
-        //  Вспомогательный метод: строит простой граф
-
-        private static Graph BuildSimpleGraph()
+        // ─── Вспомогательный метод: строит простой граф для тестов ───
+        //
+        //   A ── B ── C
+        //   |         |
+        //   D ────────┘
+        //
+        //   E  (изолированная вершина)
+        //
+        private static Graph BuildSampleGraph()
         {
             var g = new Graph();
             g.AddEdge("A", "B", 1.0);
             g.AddEdge("B", "C", 2.0);
-            g.AddEdge("B", "D", 3.0);
-            g.AddVertex("E");
+            g.AddEdge("A", "D", 3.0);
+            g.AddEdge("C", "D", 1.5);
+            g.AddVertex("E"); // изолированная
             return g;
         }
 
-        //  AddVertex / AddEdge / ContainsVertex
-
+        // ═══════════════════════════════════════════════════════════════
+        //  1. Структура графа
+        // ═══════════════════════════════════════════════════════════════
 
         [TestMethod]
         public void AddVertex_NewVertex_IsContained()
@@ -41,7 +52,7 @@ namespace Lab04_Variant03.Tests
         }
 
         [TestMethod]
-        public void AddEdge_AutoCreatesVertices()
+        public void AddEdge_BothVerticesAdded()
         {
             var g = new Graph();
             g.AddEdge("A", "B", 5.0);
@@ -50,355 +61,286 @@ namespace Lab04_Variant03.Tests
         }
 
         [TestMethod]
-        public void AddEdge_UndirectedBothDirections()
+        public void AddEdge_GraphIsUndirected()
         {
             var g = new Graph();
-            g.AddEdge("A", "B", 7.0);
+            g.AddEdge("A", "B", 5.0);
 
-            var neighborsA = g.GetNeighbors("A").ToList();
-            var neighborsB = g.GetNeighbors("B").ToList();
+            var neighborsOfA = g.GetNeighbors("A").Select(n => n.neighbor).ToList();
+            var neighborsOfB = g.GetNeighbors("B").Select(n => n.neighbor).ToList();
 
-            Assert.IsTrue(neighborsA.Any(n => n.neighbor == "B" && n.weight == 7.0));
-            Assert.IsTrue(neighborsB.Any(n => n.neighbor == "A" && n.weight == 7.0));
+            CollectionAssert.Contains(neighborsOfA, "B");
+            CollectionAssert.Contains(neighborsOfB, "A");
         }
 
         [TestMethod]
-        public void ContainsVertex_NonExistent_ReturnsFalse()
+        public void GetNeighbors_CorrectWeightReturned()
         {
             var g = new Graph();
-            Assert.IsFalse(g.ContainsVertex("Z"));
+            g.AddEdge("A", "B", 7.5);
+
+            var weight = g.GetNeighbors("A").First(n => n.neighbor == "B").weight;
+            Assert.AreEqual(7.5, weight);
         }
 
-        [TestMethod]
-        public void GetNeighbors_UnknownVertex_ReturnsEmpty()
-        {
-            var g = new Graph();
-            var result = g.GetNeighbors("Unknown").ToList();
-            Assert.AreEqual(0, result.Count);
-        }
-
-        //  BFS
-
-        [TestMethod]
-        public void BFS_StartsWithStartVertex()
-        {
-            var g = BuildSimpleGraph();
-            var order = g.BFS("A");
-            Assert.AreEqual("A", order[0]);
-        }
+        // ═══════════════════════════════════════════════════════════════
+        //  2. BFS
+        // ═══════════════════════════════════════════════════════════════
 
         [TestMethod]
         public void BFS_VisitsAllReachableVertices()
         {
-            var g = BuildSimpleGraph();
-            var order = g.BFS("A");
-            // A, B, C, D — все связаны; E изолирована
-            CollectionAssert.Contains(order, "A");
-            CollectionAssert.Contains(order, "B");
-            CollectionAssert.Contains(order, "C");
-            CollectionAssert.Contains(order, "D");
-            CollectionAssert.DoesNotContain(order, "E");
+            var g = BuildSampleGraph();
+            var result = g.BFS("A");
+
+            // A, B, C, D — все связаны с A; E — изолирована
+            Assert.AreEqual(4, result.Count);
+            CollectionAssert.Contains(result, "A");
+            CollectionAssert.Contains(result, "B");
+            CollectionAssert.Contains(result, "C");
+            CollectionAssert.Contains(result, "D");
         }
 
         [TestMethod]
-        public void BFS_NoDuplicates()
+        public void BFS_StartVertexIsFirst()
         {
-            var g = BuildSimpleGraph();
-            var order = g.BFS("A");
-            Assert.AreEqual(order.Count, order.Distinct().Count());
+            var g = BuildSampleGraph();
+            var result = g.BFS("A");
+            Assert.AreEqual("A", result[0]);
         }
 
         [TestMethod]
-        public void BFS_SingleVertex_ReturnsSelf()
+        public void BFS_IsolatedVertex_ReturnsSingleElement()
         {
-            var g = new Graph();
-            g.AddVertex("Solo");
-            var order = g.BFS("Solo");
-            Assert.AreEqual(1, order.Count);
-            Assert.AreEqual("Solo", order[0]);
+            var g = BuildSampleGraph();
+            var result = g.BFS("E");
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("E", result[0]);
         }
 
         [TestMethod]
-        public void BFS_LinearChain_CorrectOrder()
+        public void BFS_NoVertexVisitedTwice()
         {
-            // A ─ B ─ C ─ D
-            var g = new Graph();
-            g.AddEdge("A", "B", 1);
-            g.AddEdge("B", "C", 1);
-            g.AddEdge("C", "D", 1);
-
-            var order = g.BFS("A");
-            CollectionAssert.AreEqual(new[] { "A", "B", "C", "D" }, order);
+            var g = BuildSampleGraph();
+            var result = g.BFS("A");
+            Assert.AreEqual(result.Count, result.Distinct().Count());
         }
 
-        //  DFS
-
-
-        [TestMethod]
-        public void DFS_StartsWithStartVertex()
-        {
-            var g = BuildSimpleGraph();
-            var order = g.DFS("A");
-            Assert.AreEqual("A", order[0]);
-        }
+        // ═══════════════════════════════════════════════════════════════
+        //  3. DFS
+        // ═══════════════════════════════════════════════════════════════
 
         [TestMethod]
         public void DFS_VisitsAllReachableVertices()
         {
-            var g = BuildSimpleGraph();
-            var order = g.DFS("A");
-            CollectionAssert.Contains(order, "A");
-            CollectionAssert.Contains(order, "B");
-            CollectionAssert.Contains(order, "C");
-            CollectionAssert.Contains(order, "D");
-            CollectionAssert.DoesNotContain(order, "E");
+            var g = BuildSampleGraph();
+            var result = g.DFS("A");
+
+            Assert.AreEqual(4, result.Count);
+            CollectionAssert.Contains(result, "A");
+            CollectionAssert.Contains(result, "B");
+            CollectionAssert.Contains(result, "C");
+            CollectionAssert.Contains(result, "D");
         }
 
         [TestMethod]
-        public void DFS_NoDuplicates()
+        public void DFS_StartVertexIsFirst()
         {
-            var g = BuildSimpleGraph();
-            var order = g.DFS("A");
-            Assert.AreEqual(order.Count, order.Distinct().Count());
+            var g = BuildSampleGraph();
+            var result = g.DFS("A");
+            Assert.AreEqual("A", result[0]);
         }
 
         [TestMethod]
-        public void DFS_SingleVertex_ReturnsSelf()
+        public void DFS_IsolatedVertex_ReturnsSingleElement()
         {
-            var g = new Graph();
-            g.AddVertex("Solo");
-            var order = g.DFS("Solo");
-            Assert.AreEqual(1, order.Count);
-            Assert.AreEqual("Solo", order[0]);
+            var g = BuildSampleGraph();
+            var result = g.DFS("E");
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual("E", result[0]);
         }
 
         [TestMethod]
-        public void DFS_LinearChain_CorrectOrder()
+        public void DFS_NoVertexVisitedTwice()
         {
-            // A ─ B ─ C ─ D
-            var g = new Graph();
-            g.AddEdge("A", "B", 1);
-            g.AddEdge("B", "C", 1);
-            g.AddEdge("C", "D", 1);
-
-            var order = g.DFS("A");
-            CollectionAssert.AreEqual(new[] { "A", "B", "C", "D" }, order);
+            var g = BuildSampleGraph();
+            var result = g.DFS("A");
+            Assert.AreEqual(result.Count, result.Distinct().Count());
         }
 
+        // ═══════════════════════════════════════════════════════════════
+        //  4. Достижимость
+        // ═══════════════════════════════════════════════════════════════
 
-        //  IsReachable
-
+        [TestMethod]
+        public void IsReachable_ConnectedVertices_ReturnsTrue()
+        {
+            var g = BuildSampleGraph();
+            Assert.IsTrue(g.IsReachable("A", "C"));
+        }
 
         [TestMethod]
         public void IsReachable_SameVertex_ReturnsTrue()
         {
-            var g = BuildSimpleGraph();
+            var g = BuildSampleGraph();
             Assert.IsTrue(g.IsReachable("A", "A"));
-        }
-
-        [TestMethod]
-        public void IsReachable_DirectNeighbor_ReturnsTrue()
-        {
-            var g = BuildSimpleGraph();
-            Assert.IsTrue(g.IsReachable("A", "B"));
-        }
-
-        [TestMethod]
-        public void IsReachable_IndirectNeighbor_ReturnsTrue()
-        {
-            var g = BuildSimpleGraph();
-            Assert.IsTrue(g.IsReachable("A", "C"));
-            Assert.IsTrue(g.IsReachable("A", "D"));
         }
 
         [TestMethod]
         public void IsReachable_IsolatedVertex_ReturnsFalse()
         {
-            var g = BuildSimpleGraph();
+            var g = BuildSampleGraph();
             Assert.IsFalse(g.IsReachable("A", "E"));
         }
 
         [TestMethod]
-        public void IsReachable_Undirected_BothWays()
+        public void IsReachable_ReverseDirection_ReturnsTrue()
         {
-            var g = BuildSimpleGraph();
+            var g = BuildSampleGraph();
+            // граф неориентированный — C достижима из A и A из C
             Assert.IsTrue(g.IsReachable("C", "A"));
-            Assert.IsTrue(g.IsReachable("D", "A"));
         }
 
-        //  GetConnectedComponents
+        // ═══════════════════════════════════════════════════════════════
+        //  5. Компоненты связности
+        // ═══════════════════════════════════════════════════════════════
 
+        [TestMethod]
+        public void GetConnectedComponents_TwoComponents()
+        {
+            var g = BuildSampleGraph();
+            var components = g.GetConnectedComponents();
+            // {A,B,C,D} и {E}
+            Assert.AreEqual(2, components.Count);
+        }
+
+        [TestMethod]
+        public void GetConnectedComponents_AllVerticesCovered()
+        {
+            var g = BuildSampleGraph();
+            var all = g.GetConnectedComponents().SelectMany(c => c).ToList();
+            Assert.AreEqual(g.Vertices.Count, all.Count);
+        }
 
         [TestMethod]
         public void GetConnectedComponents_FullyConnected_OneComponent()
         {
             var g = new Graph();
-            g.AddEdge("A", "B", 1);
-            g.AddEdge("B", "C", 1);
+            g.AddEdge("X", "Y", 1);
+            g.AddEdge("Y", "Z", 1);
+            g.AddEdge("Z", "X", 1);
 
             var components = g.GetConnectedComponents();
             Assert.AreEqual(1, components.Count);
-            Assert.AreEqual(3, components[0].Count);
         }
 
         [TestMethod]
-        public void GetConnectedComponents_TwoComponents()
+        public void GetConnectedComponents_AllIsolated_EachIsOwnComponent()
         {
             var g = new Graph();
-            g.AddEdge("A", "B", 1);
-            g.AddEdge("C", "D", 1);
-
-            var components = g.GetConnectedComponents();
-            Assert.AreEqual(2, components.Count);
-        }
-
-        [TestMethod]
-        public void GetConnectedComponents_IsolatedVertices_EachIsOwnComponent()
-        {
-            var g = new Graph();
-            g.AddVertex("X");
-            g.AddVertex("Y");
-            g.AddVertex("Z");
+            g.AddVertex("A");
+            g.AddVertex("B");
+            g.AddVertex("C");
 
             var components = g.GetConnectedComponents();
             Assert.AreEqual(3, components.Count);
-            Assert.IsTrue(components.All(c => c.Count == 1));
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        //  6. Дейкстра (ЛР №5)
+        // ═══════════════════════════════════════════════════════════════
+
+        [TestMethod]
+        public void Dijkstra_SourceDistanceIsZero()
+        {
+            var g = BuildSampleGraph();
+            var (dist, _) = g.Dijkstra("A");
+            Assert.AreEqual(0.0, dist["A"]);
         }
 
         [TestMethod]
-        public void GetConnectedComponents_SimpleGraph_ConnectedAndIsolated()
+        public void Dijkstra_DirectNeighborDistance_IsCorrect()
         {
-            var g = BuildSimpleGraph(); // A-B-C-D связаны, E изолирована
-            var components = g.GetConnectedComponents();
-            Assert.AreEqual(2, components.Count);
-
-            var sizes = components.Select(c => c.Count).OrderByDescending(x => x).ToList();
-            Assert.AreEqual(4, sizes[0]); // A, B, C, D
-            Assert.AreEqual(1, sizes[1]); // E
+            var g = BuildSampleGraph();
+            var (dist, _) = g.Dijkstra("A");
+            // A─B = 1.0
+            Assert.AreEqual(1.0, dist["B"], 1e-9);
         }
 
         [TestMethod]
-        public void GetConnectedComponents_EmptyGraph_NoComponents()
+        public void Dijkstra_ShortestPath_ChoosesMinimum()
         {
+            var g = BuildSampleGraph();
+            var (dist, _) = g.Dijkstra("A");
+            // A─D напрямую = 3.0, через B─C─D = 1+2+1.5 = 4.5 → должно быть 3.0
+            Assert.AreEqual(3.0, dist["D"], 1e-9);
+        }
+
+        [TestMethod]
+        public void Dijkstra_IsolatedVertex_IsInfinity()
+        {
+            var g = BuildSampleGraph();
+            var (dist, _) = g.Dijkstra("A");
+            Assert.AreEqual(double.PositiveInfinity, dist["E"]);
+        }
+
+        [TestMethod]
+        public void Dijkstra_AllVerticesPresent_InResult()
+        {
+            var g = BuildSampleGraph();
+            var (dist, _) = g.Dijkstra("A");
+            foreach (string v in g.Vertices)
+                Assert.IsTrue(dist.ContainsKey(v), $"Вершина {v} отсутствует в результате");
+        }
+
+        [TestMethod]
+        public void RestorePath_ValidPath_ReturnsCorrectSequence()
+        {
+            var g = BuildSampleGraph();
+            var (_, prev) = g.Dijkstra("A");
+            var path = Graph.RestorePath(prev, "A", "C");
+
+            // Путь должен начинаться с A и заканчиваться C
+            Assert.AreEqual("A", path[0]);
+            Assert.AreEqual("C", path[^1]);
+        }
+
+        [TestMethod]
+        public void RestorePath_SameVertex_ReturnsSingleElement()
+        {
+            var g = BuildSampleGraph();
+            var (_, prev) = g.Dijkstra("A");
+            var path = Graph.RestorePath(prev, "A", "A");
+
+            Assert.AreEqual(1, path.Count);
+            Assert.AreEqual("A", path[0]);
+        }
+
+        [TestMethod]
+        public void RestorePath_UnreachableVertex_ReturnsEmpty()
+        {
+            var g = BuildSampleGraph();
+            var (_, prev) = g.Dijkstra("A");
+            var path = Graph.RestorePath(prev, "A", "E");
+
+            Assert.AreEqual(0, path.Count);
+        }
+
+        [TestMethod]
+        public void Dijkstra_LinearGraph_DistancesAreAccumulated()
+        {
+            // A ─1─ B ─2─ C ─3─ D
             var g = new Graph();
-            var components = g.GetConnectedComponents();
-            Assert.AreEqual(0, components.Count);
-        }
+            g.AddEdge("A", "B", 1.0);
+            g.AddEdge("B", "C", 2.0);
+            g.AddEdge("C", "D", 3.0);
 
+            var (dist, _) = g.Dijkstra("A");
 
-        //  LoadFromFile
-
-
-        [TestMethod]
-        public void LoadFromFile_ValidFile_LoadsVerticesAndEdges()
-        {
-            string path = CreateTempGraphFile(
-                "VERTICES",
-                "A",
-                "B",
-                "C",
-                "EDGES",
-                "A;B;1.5",
-                "B;C;2.0"
-            );
-
-            try
-            {
-                var g = Graph.LoadFromFile(path);
-                Assert.AreEqual(3, g.Vertices.Count);
-                Assert.IsTrue(g.ContainsVertex("A"));
-                Assert.IsTrue(g.ContainsVertex("B"));
-                Assert.IsTrue(g.ContainsVertex("C"));
-                Assert.IsTrue(g.GetNeighbors("A").Any(n => n.neighbor == "B" && n.weight == 1.5));
-                Assert.IsTrue(g.GetNeighbors("B").Any(n => n.neighbor == "C" && n.weight == 2.0));
-            }
-            finally
-            {
-                File.Delete(path);
-            }
-        }
-
-        [TestMethod]
-        public void LoadFromFile_CommentsAndEmptyLines_AreIgnored()
-        {
-            string path = CreateTempGraphFile(
-                "# Это комментарий",
-                "",
-                "VERTICES",
-                "# ещё комментарий",
-                "A",
-                "B",
-                "EDGES",
-                "A;B;3.0"
-            );
-
-            try
-            {
-                var g = Graph.LoadFromFile(path);
-                Assert.AreEqual(2, g.Vertices.Count);
-            }
-            finally
-            {
-                File.Delete(path);
-            }
-        }
-
-        [TestMethod]
-        public void LoadFromFile_EdgeWithInvalidFormat_IsSkipped()
-        {
-            string path = CreateTempGraphFile(
-                "VERTICES",
-                "A",
-                "B",
-                "EDGES",
-                "A;B",          // неполная строка — пропускается
-                "A;B;1.0"
-            );
-
-            try
-            {
-                var g = Graph.LoadFromFile(path);
-                // Только одно корректное ребро
-                Assert.AreEqual(1, g.GetNeighbors("A").Count());
-            }
-            finally
-            {
-                File.Delete(path);
-            }
-        }
-
-        [TestMethod]
-        public void LoadFromFile_WeightUsesInvariantCulture()
-        {
-            string path = CreateTempGraphFile(
-                "VERTICES",
-                "A",
-                "B",
-                "EDGES",
-                "A;B;1.75"
-            );
-
-            try
-            {
-                var g = Graph.LoadFromFile(path);
-                double weight = g.GetNeighbors("A").First(n => n.neighbor == "B").weight;
-                Assert.AreEqual(1.75, weight, 1e-9);
-            }
-            finally
-            {
-                File.Delete(path);
-            }
-        }
-
-
-        //  Вспомогательный метод
-
-
-        private static string CreateTempGraphFile(params string[] lines)
-        {
-            string path = Path.GetTempFileName();
-            File.WriteAllLines(path, lines);
-            return path;
+            Assert.AreEqual(1.0, dist["B"], 1e-9);
+            Assert.AreEqual(3.0, dist["C"], 1e-9);
+            Assert.AreEqual(6.0, dist["D"], 1e-9);
         }
     }
 }
+

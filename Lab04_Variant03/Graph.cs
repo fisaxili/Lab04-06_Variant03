@@ -257,6 +257,33 @@ namespace Lab04_Variant03
 
             return (dist, prev);
         }
+        /// <summary>
+        /// Восстанавливает маршрут от <paramref name="source"/> до
+        /// <paramref name="target"/> по таблице предшественников.
+        /// Возвращает пустой список, если путь не существует.
+        /// </summary>
+        public static List<string> RestorePath(
+            Dictionary<string, string?> prev,
+            string source,
+            string target)
+        {
+            var path = new List<string>();
+            string? current = target;
+
+            while (current != null)
+            {
+                path.Add(current);
+                if (current == source) break;
+                prev.TryGetValue(current, out current);
+            }
+
+            // Путь не найден — стартовая вершина не достигнута
+            if (path.Count == 0 || path[^1] != source)
+                return new List<string>();
+
+            path.Reverse();
+            return path;
+        }
 
         //  Загрузка графа из файла
         /// <summary>
